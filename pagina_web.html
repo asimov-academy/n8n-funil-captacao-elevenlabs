@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Inscrição | Curso</title>
+  <style>
+    :root{
+      --bg:#0b0e12; --card:#0f131a; --text:#e7ecf3; --muted:#8a93a5;
+      --accent:#ff6a00; --ring:rgba(255,106,0,.35); --border:#1b2330;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; overflow-x:hidden}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg,#0b0e12,#0e1117);
+      color:var(--text); line-height:1.5;
+    }
+    .wrap{max-width:560px; margin:0 auto; padding:clamp(16px,4vw,24px); min-height:100svh; display:flex; align-items:center}
+    .card{
+      width:100%; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border); border-radius:16px; padding:clamp(18px,4vw,26px);
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+    h1{margin:0 0 .35rem; font-size:clamp(1.6rem, 4.8vw, 2rem); line-height:1.2}
+    p.sub{margin:.15rem 0 1rem; color:var(--muted); font-size:clamp(.95rem, 3.2vw, 1.05rem)}
+
+    label{display:block; font-weight:700; margin:.5rem 0 .35rem}
+    .required{color:var(--accent); margin-left:.25rem}
+
+    input[type="text"], input[type="email"], input[type="tel"]{
+      width:100%; border:1px solid var(--border); background:#0d1218; color:var(--text);
+      border-radius:12px; padding:1rem; outline:none; transition:border-color .2s, box-shadow .2s, background .2s;
+      font-size:16px; /* evita zoom no iOS */ min-height:52px;
+    }
+    input:focus{ border-color:var(--accent); box-shadow:0 0 0 4px var(--ring); }
+    input::placeholder{ color:#9aa6bb }
+
+    .actions{ display:flex; gap:.8rem; margin-top:1.1rem }
+    .actions .btn{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      background:linear-gradient(135deg, var(--accent), #ff9745 55%, #ffd089 120%);
+      color:#1a120b; font-weight:800; border:none; border-radius:12px; padding:1rem 1.1rem;
+      cursor:pointer; box-shadow:0 12px 28px rgba(255,106,0,.25); font-size:1rem; min-height:56px;
+      transition:transform .06s ease, filter .15s ease;
+    }
+    .btn:hover{ filter:brightness(1.04) }
+    .btn:active{ transform:translateY(1px) }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed }
+
+    .footnote{ color:var(--muted); font-size:.9rem; margin-top:.75rem }
+
+    .alert{ display:none; margin:.6rem 0 0; padding:.9rem 1rem; border-radius:12px; font-size:.95rem }
+    .alert.success{ background:rgba(16,185,129,.12); color:#34d399; border:1px solid rgba(16,185,129,.35) }
+    .alert.error{ background:rgba(239,68,68,.12); color:#f87171; border:1px solid rgba(239,68,68,.35) }
+
+    /* Muito pequenos */
+    @media (max-width:320px){ .wrap{padding:14px} .card{padding:16px} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card">
+      <header>
+        <h1>Inscreva‑se para o curso</h1>
+        <p class="sub">Deixe seu <strong>nome</strong>, <strong>e‑mail</strong> e <strong>WhatsApp</strong> para receber o acesso e os materiais.</p>
+      </header>
+
+      <form id="lead-form" method="POST" action="https://n8n.srv977866.hstgr.cloud/webhook/form" target="webhookFrame" novalidate>
+        <!-- Honeypot contra bots -->
+        <input type="text" name="website_field" id="website_field" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
+        <iframe name="webhookFrame" id="webhookFrame" style="display:none"></iframe>
+
+        <div class="field">
+          <label for="nome">Nome completo<span class="required">*</span></label>
+          <input id="nome" name="nome" type="text" placeholder="Ex.: Ana Lima" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="email">E‑mail<span class="required">*</span></label>
+          <input id="email" name="email" type="email" placeholder="voce@empresa.com" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="whatsapp">WhatsApp<span class="required">*</span></label>
+          <input id="whatsapp" name="whatsapp" type="tel" inputmode="numeric" placeholder="(11) 91234‑5678" autocomplete="tel" required />
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="submit-btn" class="btn">Garantir minha vaga</button>
+        </div>
+
+        <div id="alert-success" class="alert success" role="status" aria-live="polite">Inscrição realizada! Em instantes você recebe os detalhes.</div>
+        <div id="alert-error" class="alert error" role="alert">Não foi possível enviar. Revise os campos e tente novamente.</div>
+        <p class="footnote">Ao enviar, você concorda em receber comunicações sobre este curso. Você pode se descadastrar a qualquer momento.</p>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // Máscara simples para WhatsApp (BR): (11) 9XXXX-XXXX ou (11) XXXX-XXXX
+    const phone = document.getElementById('whatsapp');
+    phone.addEventListener('input', () => {
+      const digits = phone.value.replace(/\D/g, '').slice(0, 11);
+      let out = digits;
+      if (out.length > 2) out = `(${out.slice(0,2)}) ${out.slice(2)}`;
+      if (out.length > 10) out = `${out.slice(0,10)}-${out.slice(10)}`;
+      phone.value = out;
+    });
+
+    const form = document.getElementById('lead-form');
+    const success = document.getElementById('alert-success');
+    const error = document.getElementById('alert-error');
+    const submitBtn = document.getElementById('submit-btn');
+
+    const show = el => { el.style.display = 'block'; };
+    const hide = el => { el.style.display = 'none'; };
+
+    function basicValidate(){
+      hide(success); hide(error);
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const whats = document.getElementById('whatsapp').value.replace(/\D/g,'');
+      const emailOk = /.+@.+\..+/.test(email);
+      const whatsOk = whats.length >= 10; // aceita 10 ou 11 dígitos
+      return nome.length >= 2 && emailOk && whatsOk;
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (document.getElementById('website_field').value) return; // honeypot
+      if (!basicValidate()){ show(error); return; }
+
+      submitBtn.disabled = true; const original = submitBtn.textContent; submitBtn.textContent = 'Enviando...';
+
+      // Submete no iframe para não sair da página
+      const iframe = document.getElementById('webhookFrame');
+      const onLoad = () => {
+        show(success); hide(error); form.reset(); submitBtn.disabled = false; submitBtn.textContent = original; iframe.removeEventListener('load', onLoad);
+        // foco no alerta para leitores de tela / UX
+        success.setAttribute('tabindex','-1'); success.focus && success.focus();
+      };
+      iframe.addEventListener('load', onLoad);
+
+      // limpa telefone para o webhook
+      const phoneInput = document.getElementById('whatsapp');
+      const formatted = phoneInput.value; phoneInput.value = formatted.replace(/\D/g,'');
+      form.submit();
+      // restaura formatação
+      phoneInput.value = formatted;
+
+      // timeout de segurança
+      setTimeout(() => { if (submitBtn.disabled){ submitBtn.disabled = false; submitBtn.textContent = original; } }, 6000);
+    });
+  </script>
+</body>
+</html>
