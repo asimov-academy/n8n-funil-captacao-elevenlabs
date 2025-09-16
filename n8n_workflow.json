@@ -1,0 +1,473 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "path": "form",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        -240
+      ],
+      "id": "08b5cc7c-e17a-4c0b-b6e4-c4d0d88ce403",
+      "name": "Webhook",
+      "webhookId": "00f7a665-ee61-4f2c-97ba-4c58ee1f62e4"
+    },
+    {
+      "parameters": {
+        "html": "<!doctype html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\" />\n  <title>Inscrição | Curso</title>\n  <style>\n    :root{\n      --bg:#0b0e12; --card:#0f131a; --text:#e7ecf3; --muted:#8a93a5;\n      --accent:#ff6a00; --ring:rgba(255,106,0,.35); --border:#1b2330;\n    }\n    *{box-sizing:border-box}\n    html,body{height:100%; overflow-x:hidden}\n    body{\n      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;\n      background: linear-gradient(180deg,#0b0e12,#0e1117);\n      color:var(--text); line-height:1.5;\n    }\n    .wrap{max-width:560px; margin:0 auto; padding:clamp(16px,4vw,24px); min-height:100svh; display:flex; align-items:center}\n    .card{\n      width:100%; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));\n      border:1px solid var(--border); border-radius:16px; padding:clamp(18px,4vw,26px);\n      box-shadow:0 20px 60px rgba(0,0,0,.35);\n    }\n    h1{margin:0 0 .35rem; font-size:clamp(1.6rem, 4.8vw, 2rem); line-height:1.2}\n    p.sub{margin:.15rem 0 1rem; color:var(--muted); font-size:clamp(.95rem, 3.2vw, 1.05rem)}\n\n    label{display:block; font-weight:700; margin:.5rem 0 .35rem}\n    .required{color:var(--accent); margin-left:.25rem}\n\n    input[type=\"text\"], input[type=\"email\"], input[type=\"tel\"]{\n      width:100%; border:1px solid var(--border); background:#0d1218; color:var(--text);\n      border-radius:12px; padding:1rem; outline:none; transition:border-color .2s, box-shadow .2s, background .2s;\n      font-size:16px; /* evita zoom no iOS */ min-height:52px;\n    }\n    input:focus{ border-color:var(--accent); box-shadow:0 0 0 4px var(--ring); }\n    input::placeholder{ color:#9aa6bb }\n\n    .actions{ display:flex; gap:.8rem; margin-top:1.1rem }\n    .actions .btn{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;\n      background:linear-gradient(135deg, var(--accent), #ff9745 55%, #ffd089 120%);\n      color:#1a120b; font-weight:800; border:none; border-radius:12px; padding:1rem 1.1rem;\n      cursor:pointer; box-shadow:0 12px 28px rgba(255,106,0,.25); font-size:1rem; min-height:56px;\n      transition:transform .06s ease, filter .15s ease;\n    }\n    .btn:hover{ filter:brightness(1.04) }\n    .btn:active{ transform:translateY(1px) }\n    .btn[disabled]{ opacity:.6; cursor:not-allowed }\n\n    .footnote{ color:var(--muted); font-size:.9rem; margin-top:.75rem }\n\n    .alert{ display:none; margin:.6rem 0 0; padding:.9rem 1rem; border-radius:12px; font-size:.95rem }\n    .alert.success{ background:rgba(16,185,129,.12); color:#34d399; border:1px solid rgba(16,185,129,.35) }\n    .alert.error{ background:rgba(239,68,68,.12); color:#f87171; border:1px solid rgba(239,68,68,.35) }\n\n    /* Muito pequenos */\n    @media (max-width:320px){ .wrap{padding:14px} .card{padding:16px} }\n  </style>\n</head>\n<body>\n  <div class=\"wrap\">\n    <main class=\"card\">\n      <header>\n        <h1>Inscreva‑se para o curso</h1>\n        <p class=\"sub\">Deixe seu <strong>nome</strong>, <strong>e‑mail</strong> e <strong>WhatsApp</strong> para receber o acesso e os materiais.</p>\n      </header>\n\n      <form id=\"lead-form\" method=\"POST\" action=\"https://n8n.srv977866.hstgr.cloud/webhook/form\" target=\"webhookFrame\" novalidate>\n        <!-- Honeypot contra bots -->\n        <input type=\"text\" name=\"website_field\" id=\"website_field\" autocomplete=\"off\" tabindex=\"-1\" aria-hidden=\"true\" style=\"position:absolute;left:-9999px;opacity:0;height:0;width:0\" />\n        <iframe name=\"webhookFrame\" id=\"webhookFrame\" style=\"display:none\"></iframe>\n\n        <div class=\"field\">\n          <label for=\"nome\">Nome completo<span class=\"required\">*</span></label>\n          <input id=\"nome\" name=\"nome\" type=\"text\" placeholder=\"Ex.: Ana Lima\" autocomplete=\"name\" required />\n        </div>\n        <div class=\"field\">\n          <label for=\"email\">E‑mail<span class=\"required\">*</span></label>\n          <input id=\"email\" name=\"email\" type=\"email\" placeholder=\"voce@empresa.com\" autocomplete=\"email\" required />\n        </div>\n        <div class=\"field\">\n          <label for=\"whatsapp\">WhatsApp<span class=\"required\">*</span></label>\n          <input id=\"whatsapp\" name=\"whatsapp\" type=\"tel\" inputmode=\"numeric\" placeholder=\"(11) 91234‑5678\" autocomplete=\"tel\" required />\n        </div>\n\n        <div class=\"actions\">\n          <button type=\"submit\" id=\"submit-btn\" class=\"btn\">Garantir minha vaga</button>\n        </div>\n\n        <div id=\"alert-success\" class=\"alert success\" role=\"status\" aria-live=\"polite\">Inscrição realizada! Em instantes você recebe os detalhes.</div>\n        <div id=\"alert-error\" class=\"alert error\" role=\"alert\">Não foi possível enviar. Revise os campos e tente novamente.</div>\n        <p class=\"footnote\">Ao enviar, você concorda em receber comunicações sobre este curso. Você pode se descadastrar a qualquer momento.</p>\n      </form>\n    </main>\n  </div>\n\n  <script>\n    // Máscara simples para WhatsApp (BR): (11) 9XXXX-XXXX ou (11) XXXX-XXXX\n    const phone = document.getElementById('whatsapp');\n    phone.addEventListener('input', () => {\n      const digits = phone.value.replace(/\\D/g, '').slice(0, 11);\n      let out = digits;\n      if (out.length > 2) out = `(${out.slice(0,2)}) ${out.slice(2)}`;\n      if (out.length > 10) out = `${out.slice(0,10)}-${out.slice(10)}`;\n      phone.value = out;\n    });\n\n    const form = document.getElementById('lead-form');\n    const success = document.getElementById('alert-success');\n    const error = document.getElementById('alert-error');\n    const submitBtn = document.getElementById('submit-btn');\n\n    const show = el => { el.style.display = 'block'; };\n    const hide = el => { el.style.display = 'none'; };\n\n    function basicValidate(){\n      hide(success); hide(error);\n      const nome = document.getElementById('nome').value.trim();\n      const email = document.getElementById('email').value.trim();\n      const whats = document.getElementById('whatsapp').value.replace(/\\D/g,'');\n      const emailOk = /.+@.+\\..+/.test(email);\n      const whatsOk = whats.length >= 10; // aceita 10 ou 11 dígitos\n      return nome.length >= 2 && emailOk && whatsOk;\n    }\n\n    form.addEventListener('submit', (e) => {\n      e.preventDefault();\n      if (document.getElementById('website_field').value) return; // honeypot\n      if (!basicValidate()){ show(error); return; }\n\n      submitBtn.disabled = true; const original = submitBtn.textContent; submitBtn.textContent = 'Enviando...';\n\n      // Submete no iframe para não sair da página\n      const iframe = document.getElementById('webhookFrame');\n      const onLoad = () => {\n        show(success); hide(error); form.reset(); submitBtn.disabled = false; submitBtn.textContent = original; iframe.removeEventListener('load', onLoad);\n        // foco no alerta para leitores de tela / UX\n        success.setAttribute('tabindex','-1'); success.focus && success.focus();\n      };\n      iframe.addEventListener('load', onLoad);\n\n      // limpa telefone para o webhook\n      const phoneInput = document.getElementById('whatsapp');\n      const formatted = phoneInput.value; phoneInput.value = formatted.replace(/\\D/g,'');\n      form.submit();\n      // restaura formatação\n      phoneInput.value = formatted;\n\n      // timeout de segurança\n      setTimeout(() => { if (submitBtn.disabled){ submitBtn.disabled = false; submitBtn.textContent = original; } }, 6000);\n    });\n  </script>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -304
+      ],
+      "id": "b54afb12-796a-481c-b6d2-12bd8c6b9959",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        160,
+        -240
+      ],
+      "id": "322517b5-8687-4882-99d9-3ff3570a7bcd",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "form",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        112
+      ],
+      "id": "1fd2fc9a-9575-4a87-ae2f-620f23f777f6",
+      "name": "Webhook1",
+      "webhookId": "3c6a31a8-25dd-4b92-8c17-a1596d0075a2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb6589db-fcc4-4add-82f4-6b82af0dac02",
+              "name": "nome",
+              "value": "={{ $json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "75361c19-5764-4217-9380-e1495c52934c",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "cf1be4eb-fde7-4f24-b461-5ce4e2e38a5b",
+              "name": "whatsapp",
+              "value": "={{ $json.body.whatsapp }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        112
+      ],
+      "id": "0c4c502c-3a69-4e0c-81b9-eb2980d8e17d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/19MJpPtAQYRNe6GZX6xJyfaQruWCbFCVlO-ds0qlz_7M/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19MJpPtAQYRNe6GZX6xJyfaQruWCbFCVlO-ds0qlz_7M/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $json.nome }}",
+            "email": "={{ $json.email }}",
+            "whatsapp": "={{ $json.whatsapp }}"
+          },
+          "matchingColumns": [
+            "whatsapp"
+          ],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "whatsapp",
+              "displayName": "whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        192,
+        112
+      ],
+      "id": "3c2b22c6-ab21-4d50-9275-29eda1ce3ce5",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FoWm64Z2tWQhzLgw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Abaixo o nome do cliente para você gerar uma mensagem:\n\n {{ $json.nome }}\n\nAgora gere uma mensagem de boas vindas seguindo todas as regras.",
+        "options": {
+          "systemMessage": "Você é um assistente que escreve mensagens curtas, naturais e informais, como se estivesse falando com um amigo por WhatsApp.\nContexto: a pessoa acabou de se inscrever para receber conteúdos exclusivos.\n\nRegras:\n\nIdioma: português do Brasil.\n\nTom: amigável, descontraído, de conversa entre amigos.\n\nParabenize pela inscrição e diga que foi um primeiro passo importante.\n\nAvise que vai mandar novidades por ali e que a pessoa pode chamar se precisar.\n\nNo máximo 3 frases.\n\nSem emojis, sem formalidade.\n\nUse “fala”, “valeu”, “tamo junto” ou expressões semelhantes, se fizer sentido.\n\nFormato da saída:\n\nApenas o corpo da mensagem em texto puro.\n\nSem rótulos, sem metadados.\n\nAQUI VAI UM EXEMPLO DE UMA BOA MENSAGEM:\n\n“Falaa Samuel, tranquilo? Vi aqui sua inscrição e queria te dar os parabéns, esse já é um primeiro passo bem importante. Vou te avisar por aqui sempre que tiver novidade, qualquer coisa só chamar. Valeu!”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -544,
+        464
+      ],
+      "id": "1e1e359f-9158-48db-a613-2740ac53a44d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        704
+      ],
+      "id": "995a6835-bc4a-460c-91da-34dacb18e386",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Fetv1Ete3PnhgJzv",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "voice": {
+          "__rl": true,
+          "value": "siTfkI5tQJRAP3KW8vEG",
+          "mode": "list",
+          "cachedResultName": "Samuel Sublate"
+        },
+        "text": "={{ $json.output }}",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        464
+      ],
+      "id": "d0e84113-4d85-40b3-8764-9c0be0e4c0af",
+      "name": "Convert text to speech",
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "CAPENNCi4BsacG94",
+          "name": "ElevenLabs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "destinationKey": "audio",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        16,
+        448
+      ],
+      "id": "34157070-bda1-423c-831f-6fbf7737702c",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        448
+      ],
+      "id": "0fad8b9a-0bbe-4178-a5aa-9943ee32d2e2",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3E2DED7041CC00A797874A39F5505F78/token/BBAA86FE97983929EC5206B3/send-audio",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "Fd6fdaf30ca9841fa9c85cb4b6125acffS"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ '55' + $json.whatsapp }}"
+            },
+            {
+              "name": "audio",
+              "value": "={{ 'data:audio/mpga;base64,' + $json.audio }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        752
+      ],
+      "id": "77a385ee-71ff-4804-a929-f9c4f8377687",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "## Criação da pagina",
+        "height": 432,
+        "width": 1136
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -640,
+        -448
+      ],
+      "typeVersion": 1,
+      "id": "f95e70a6-6d2b-4a40-a2f4-ac7a425d3bfe",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Salvamento das informações",
+        "height": 352,
+        "width": 1136
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -640,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "2732061a-21c7-4738-ac1b-a8f3ac033d97",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Mensagens de boas vindas",
+        "height": 512,
+        "width": 1136
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -640,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "38361be1-1d93-4d78-a008-bcfe3d3344f6",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert text to speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert text to speech": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "26d55fdd7b646b765f880344346eb787894fd2f98b5573a1357af9be7c13c655"
+  }
+}
